@@ -1,0 +1,60 @@
+
+int trigPin = 2;    //Trig - green Jumper
+int echoPin = 3;    //Echo - yellow Jumper
+int DisplayLED = 13; //Intrusion Display LED
+long duration, cm , cmSub, cmDelay, curbFound, cmSubabs;
+ 
+void setup() {
+
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(13, OUTPUT);
+  pinMode(echoPin, INPUT);
+  digitalWrite(13, LOW);
+    delay(100); 
+}
+void loop()
+{
+ 
+  // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+ 
+  // Read the signal from the sensor: a HIGH pulse whose
+  // duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+ 
+  // convert the time into a distance
+  cm = (duration/2) / 29.1;
+  // Convert distance to change of distance
+  cmSub = cm - cmDelay;
+  //Convert distance value to absolute value
+  cmSubabs = abs(cmSub);
+  
+  Serial.print(cmSub);
+  Serial.print(" cm");
+  Serial.println();
+  
+ if (cmSubabs >= 15 && cmSubabs < 50) {
+   digitalWrite(13, HIGH);
+   tone(12, 1000, 500);
+   Serial.print("Danger!");
+  Serial.println();
+   delay (3000);
+ } 
+ else if (cmSubabs > 50) 
+ {
+ } 
+else
+{
+}
+   cmDelay = cm;
+    delay(500);
+  digitalWrite(13, LOW);
+}
